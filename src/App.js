@@ -15,11 +15,14 @@ export default function App(){
   function addItems(item){
   setItems((i) => [...i,item])
 }
+function updateItems(updatedItems){
+  setItems(updatedItems)
+}
   return (
     <div>
       <Logo/>
       <Form changeItems={addItems}/>
-      <PackingList items={items} />
+      <PackingList items={items} updateItems={updateItems} />
       <Stats/>
     </div>
   )
@@ -60,13 +63,13 @@ export default function App(){
     );
   }
 
-  function PackingList({items}){
+  function PackingList({items, updateItems}){
     return (
     <div className="list">
       <ul>
         {items.map(item => 
 
-          <Item item={item} key={item.id}/>
+          <Item item={item} items={items} update={updateItems} key={item.id}/>
 
         )}
         </ul>
@@ -74,11 +77,21 @@ export default function App(){
     )
   }
 
-  function Item({item}){
+  function Item({item, items, update}){
+    function handleClick(){
+      const updatedItems = items.map((i)=>{
+        if (i.id === item.id){
+           return {...i, packed : !i.packed}
+        }
+        return i
+      }
+      )
+      update(updatedItems);
+    }
     return (
     <li>
       <span style={item.packed ?{textDecoration: "line-through"}:{}}>{item.quantity} {item.description}</span>
-     <button>❌</button>
+     <button onClick={handleClick}>❌</button>
     </li>
     )
   }
