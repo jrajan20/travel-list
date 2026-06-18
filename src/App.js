@@ -1,28 +1,48 @@
 import { useState } from "react";
 
 
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: false },
-  { id: 3, description: "Charger", quantity: 1, packed: true }
-];
+// const initialItems = [
+//   { id: 1, description: "Passports", quantity: 2, packed: false },
+//   { id: 2, description: "Socks", quantity: 12, packed: false },
+//   { id: 3, description: "Charger", quantity: 1, packed: true }
+// ];
 
 
 
 export default function App(){
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState([]);
+ 
+
+
 
   function addItems(item){
   setItems((i) => [...i,item])
 }
-function updateItems(updatedItems){
-  setItems(updatedItems)
+
+function deleteItems(id){
+
+  setItems(items => items.filter((item) => item.id !== id ));
 }
+
+function handleToggleItem(id){
+
+  setItems(items => items.map((i)=>{
+        if (i.id === id){
+           return {...i, packed : !i.packed}
+        }
+        return i
+      }));
+    
+
+}
+// function updateItems(updatedItems){
+//   setItems(updatedItems)
+// }
   return (
     <div>
       <Logo/>
       <Form changeItems={addItems}/>
-      <PackingList items={items} updateItems={updateItems} />
+      <PackingList items={items} onDeleteItem={deleteItems} toggleItems={handleToggleItem}/>
       <Stats/>
     </div>
   )
@@ -63,13 +83,13 @@ function updateItems(updatedItems){
     );
   }
 
-  function PackingList({items, updateItems}){
+  function PackingList({items, deleteItems, toggleItems}){
     return (
     <div className="list">
       <ul>
         {items.map(item => 
 
-          <Item item={item} items={items} update={updateItems} key={item.id}/>
+          <Item item={item} items={items} deleteItems={deleteItems} toggleItems={toggleItems} key={item.id}/>
 
         )}
         </ul>
@@ -77,21 +97,16 @@ function updateItems(updatedItems){
     )
   }
 
-  function Item({item, items, update}){
-    function handleClick(){
-      const updatedItems = items.map((i)=>{
-        if (i.id === item.id){
-           return {...i, packed : !i.packed}
-        }
-        return i
-      }
-      )
-      update(updatedItems);
-    }
+  function Item({item, items, deleteItems, toggleItems}){
+    // function handleClick(){
+    //   
+    
+    // }
     return (
     <li>
+      <input type="checkbox" value = {item.packed} onChange={()=>{toggleItems(item.id)}}/>
       <span style={item.packed ?{textDecoration: "line-through"}:{}}>{item.quantity} {item.description}</span>
-     <button onClick={handleClick}>❌</button>
+     <button onClick={() => deleteItems(item.id)}>❌</button>
     </li>
     )
   }
