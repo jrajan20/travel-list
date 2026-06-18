@@ -29,9 +29,15 @@ function handleToggleItem(id){
   setItems(items => items.map((i)=>
         i.id === id ?  {...i, packed : !i.packed} : i
       ))
-    
+}
+function clearList(){
+  const confirmed = window.confirm('Are you sure you want to delete all items?');
+  if (confirmed) setItems([]);
+  
 
 }
+
+
 // function updateItems(updatedItems){
 //   setItems(updatedItems)
 // }
@@ -39,7 +45,7 @@ function handleToggleItem(id){
     <div>
       <Logo/>
       <Form changeItems={addItems}/>
-      <PackingList items={items} onDeleteItems={deleteItems} toggleItems={handleToggleItem}/>
+      <PackingList items={items} onDeleteItems={deleteItems} toggleItems={handleToggleItem} clearList={clearList} />
       <Stats items={items}/>
     </div>
   )
@@ -80,7 +86,7 @@ function handleToggleItem(id){
     );
   }
 
-  function PackingList({items, onDeleteItems, toggleItems}){
+  function PackingList({items, onDeleteItems, toggleItems, clearList}){
 
     const [sortBy,setSortBy] = useState("input");
     let sortedItems;
@@ -107,6 +113,7 @@ function handleToggleItem(id){
             <option value='description'>Sort by description</option>
             <option value='packed'>Sort by packed</option>
           </select>
+          <button onClick={clearList}>Clear List</button>
         </div>
     </div>
     )
